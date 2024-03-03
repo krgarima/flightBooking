@@ -18,7 +18,7 @@ const SearchResults = () => {
   };
 
   const filterAndSort = (arr) => {
-    if (arr.length > 0) {
+    if (arr?.length > 0) {
       return arr
         ?.filter((flight) => filterByAirlines[flight.airline])
         ?.sort(sortByPrice[filterByPrice]);
@@ -27,20 +27,20 @@ const SearchResults = () => {
 
   return (
     <>
-      <div className="sm:hidden h-12 w-full rounded-lg bg-white mt-2 flex justify-between items-center px-4">
+      <div className="sm:hidden h-12 w-full rounded-lg bg-white mt-6 my-2 flex justify-between items-center px-4">
         <h2 className="font-bold text-xl">Search Result</h2>
         <FilterAltRoundedIcon onClick={() => setShowFilters(true)} />
       </div>
-      <div className="m-h-32 w-full flex gap-x-4 sm:mt-2">
+      <div className="m-h-32 min-w-[100%] flex gap-x-4 sm:mt-6">
         {/* Filters */}
         {showFilters && <Filters />}
 
         {/* One-way */}
-        <div className="flex-grow h-full border overflow-y-auto rounded-lg bg-white">
+        <div className="flex-grow h-full border sm:overflow-y-auto rounded-lg bg-white">
           {/* One-Way Result */}
           <FlightResultsHeading type="departure" />
           <div className="p-4">
-            {filterAndSort(departingFlightsResult).length > 0 ? (
+            {filterAndSort(departingFlightsResult)?.length > 0 ? (
               filterAndSort(departingFlightsResult)?.map((flight) => (
                 <FlightDetailsCard key={flight.id} flight={flight} />
               ))
@@ -50,11 +50,11 @@ const SearchResults = () => {
           </div>
         </div>
         {/* Two-way Result */}
-        {tripType === "twoWay" && returnFlightsResult.length > 0 && (
-          <div className="flex-grow  h-full border overflow-y-auto rounded-lg bg-white">
+        {tripType === "twoWay" && returnFlightsResult?.length > 0 && (
+          <div className="flex-grow  h-full border sm:overflow-y-auto rounded-lg bg-white">
             <FlightResultsHeading type="return" />
             <div className="p-4">
-              {filterAndSort(returnFlightsResult).length > 0 ? (
+              {filterAndSort(returnFlightsResult)?.length > 0 ? (
                 filterAndSort(returnFlightsResult)?.map((flight) => (
                   <FlightDetailsCard key={flight.id} flight={flight} />
                 ))

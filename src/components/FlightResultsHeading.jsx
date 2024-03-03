@@ -1,13 +1,12 @@
-// import React from "react";
 import useStore from "../zustand/store";
 import { formatNameBySlicing } from "../utils/helpers";
 
+// eslint-disable-next-line react/prop-types
 const FlightResultsHeading = ({ type }) => {
   const { searchFlight } = useStore();
-  const { origin, destination } = searchFlight;
 
   return (
-    <div className="h-16  w-full flex flex-col justify-evenly items-center border ">
+    <div className="h-16 text-xl w-full flex flex-col justify-evenly items-center border py-4">
       {type === "departure" ? (
         <p className="font-bold">
           {formatNameBySlicing(searchFlight?.origin)} -{" "}

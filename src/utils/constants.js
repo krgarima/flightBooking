@@ -1,11 +1,9 @@
-import dayjs from "dayjs";
-
 const DEFAULT_SEARCH_FLIGHT = {
   origin: "",
   destination: "",
   tripType: "oneWay",
   numOfTravellers: 1,
-  classType: "economy",
+  classType: "Economy",
   originDate: null,
   returnDate: null,
 };
@@ -21,7 +19,13 @@ const AIRLINES_LIST = {
   AirAsia: true,
 };
 
-const SEAT_CLASS = ["economy", "business", "first"];
+const SEAT_CLASS = ["Economy", "Business", "First"];
+
+const DEFAULT_SNACKBAR_PROPERTIES = {
+  open: false,
+  message: "",
+  severity: "success",
+};
 
 export {
   DEFAULT_SEARCH_FLIGHT,
@@ -29,4 +33,5 @@ export {
   PLACES,
   AIRLINES_LIST,
   SEAT_CLASS,
+  DEFAULT_SNACKBAR_PROPERTIES,
 };

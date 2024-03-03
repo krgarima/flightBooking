@@ -9,12 +9,21 @@ import {
   Autocomplete,
   MenuItem,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import useStore from "../zustand/store";
 import dayjs from "dayjs";
-import { PLACES, NUM_OFTRAVELLERS, SEAT_CLASS } from "../utils/constants";
+import {
+  PLACES,
+  NUM_OFTRAVELLERS,
+  SEAT_CLASS,
+  DEFAULT_SNACKBAR_PROPERTIES,
+} from "../utils/constants";
+import { useState } from "react";
 
+// eslint-disable-next-line react/prop-types
 const SearchInput = ({ setResultsFound }) => {
   const {
     tripType,
@@ -25,54 +34,71 @@ const SearchInput = ({ setResultsFound }) => {
     setReturnFlightsResult,
     setLoading,
   } = useStore();
+  const [snackbar, setSnackbar] = useState(DEFAULT_SNACKBAR_PROPERTIES);
 
   const handleDateAtOnChange = (e, name) => {
     setSearchFlight({ ...searchFlight, [name]: e.format("YYYY-MM-DD") });
   };
 
-  const getFlights = async () => {
-    const res = await fetch("https://api.npoint.io/378e02e8e732bb1ac55b");
-    const data = await res.json();
-    setLoading(false);
+  const handleOpenSnackbar = (message, severity) => {
+    setSnackbar({
+      ...snackbar,
+      open: true,
+      message: message,
+      severity: severity,
+    });
+  };
 
-    // TODO
-    // setDepartingFlightsResult(data);
-    // setReturnFlightsResult(data);
-
-    const filterFlight = (date, origin, destination) => {
-      return data.filter((flightFound) => {
-        const departureDate = flightFound.departureTime.split("T")[0];
-
-        return (
-          flightFound.origin === origin &&
-          flightFound.destination === destination &&
-          departureDate === date
-        );
-      });
-    };
-
-    const filteredResultOneWay = filterFlight(
-      searchFlight.originDate,
-      searchFlight.origin,
-      searchFlight.destination
-    );
-    setDepartingFlightsResult(filteredResultOneWay);
-    if (filteredResultOneWay.length === 0) {
-      console.log("no flights found on departure date");
+  const handleCloseSnackbar = (_, reason) => {
+    if (reason === "clickaway") {
       return;
     }
+    setSnackbar(DEFAULT_SNACKBAR_PROPERTIES);
+  };
 
-    if (tripType === "twoWay") {
-      const filteredResultRoundTrip = filterFlight(
-        searchFlight.returnDate,
-        searchFlight.destination,
-        searchFlight.origin
+  const getFlights = async () => {
+    try {
+      const res = await fetch("https://api.npoint.io/378e02e8e732bb1ac55b");
+      const data = await res.json();
+      setLoading(false);
+
+      const filterFlight = (date, origin, destination) => {
+        return data.filter((flightFound) => {
+          const departureDate = flightFound.departureTime.split("T")[0];
+
+          return (
+            flightFound.origin === origin &&
+            flightFound.destination === destination &&
+            departureDate === date
+          );
+        });
+      };
+
+      const filteredResultOneWay = filterFlight(
+        searchFlight.originDate,
+        searchFlight.origin,
+        searchFlight.destination
       );
-      setReturnFlightsResult(filteredResultRoundTrip);
-      if (filteredResultRoundTrip.length === 0) {
-        console.log("no flights found on return date");
+      setDepartingFlightsResult(filteredResultOneWay);
+      if (filteredResultOneWay.length === 0) {
+        handleOpenSnackbar("No flights found for Departure date", "error");
         return;
       }
+
+      if (tripType === "twoWay") {
+        const filteredResultRoundTrip = filterFlight(
+          searchFlight.returnDate,
+          searchFlight.destination,
+          searchFlight.origin
+        );
+        setReturnFlightsResult(filteredResultRoundTrip);
+        if (filteredResultRoundTrip.length === 0) {
+          handleOpenSnackbar("No flights found for Return date", "error");
+          return;
+        }
+      }
+    } catch (error) {
+      handleOpenSnackbar(error.message, "error");
     }
   };
 
@@ -80,37 +106,31 @@ const SearchInput = ({ setResultsFound }) => {
     setLoading(true);
 
     // empty fields check
-    if (searchFlight.origin === "" || searchFlight.destination === "") {
-      console.log("one or more fields are empty!!");
+    if (
+      searchFlight.origin === "" ||
+      searchFlight.destination === "" ||
+      !searchFlight.originDate ||
+      (tripType === "twoWay" && !searchFlight.returnDate)
+    ) {
+      handleOpenSnackbar("One or more fields are empty!!", "error");
       setLoading(false);
       return;
     }
 
     // same city noy allowed
     else if (searchFlight.origin === searchFlight.destination) {
-      console.log("we don't have flights for same city");
+      handleOpenSnackbar("We don't provide same-city flights", "error");
       setLoading(false);
       return;
     }
 
-    // Date check
-
-    // date null checking
+    // Date valid or not
     else if (
-      !searchFlight.originDate ||
-      (tripType === "twoWay" && !searchFlight.returnDate)
-    ) {
-      console.log("date empty");
-      setLoading(false);
-      return;
-    }
-    // check date valid or not
-    else if (
-      tripType === "roundTrip" &&
+      tripType === "twoWay" &&
       (dayjs(searchFlight.originDate).isAfter(searchFlight.returnDate) ||
         dayjs(searchFlight.returnDate).isBefore(searchFlight.originDate))
     ) {
-      console.log("invalid date");
+      handleOpenSnackbar("Invalid date entered!!", "error");
       setLoading(false);
       return;
     } else {
@@ -248,6 +268,19 @@ const SearchInput = ({ setResultsFound }) => {
           Search
         </Button>
       </div>
+
+      {/* Alert */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        message="Note archived"
+        // action={action}
+      >
+        <Alert variant="filled" severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

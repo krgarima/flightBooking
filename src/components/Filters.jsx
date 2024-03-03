@@ -17,7 +17,6 @@ const Filters = () => {
     filterByPrice,
     setFilterByPrice,
     setShowFilters,
-    showFilters,
   } = useFilterStore();
 
   const handleSorting = () => {
@@ -35,7 +34,9 @@ const Filters = () => {
 
   return (
     <div
-      className={`w-full sm:w-1/5 h-full border overflow-auto absolute sm:static z-10 left-0 top-0 p-4 rounded-lg bg-white`}
+      className={
+        "w-full sm:w-1/5 h-full border overflow-auto absolute sm:static z-10 left-0 top-0 p-4 rounded-lg bg-white"
+      }
     >
       <div className="sm:hidden h-8 w-full mb-2">
         <CloseIcon

@@ -9,7 +9,7 @@ const useFilterStore = create((set) => ({
   filterByPrice: "lowToHigh",
   setFilterByPrice: (filterByPrice) => set({ filterByPrice: filterByPrice }),
 
-  showFilters: false,
+  showFilters: true,
   setShowFilters: (showFilters) => set({ showFilters: showFilters }),
 }));
 
