@@ -31,7 +31,7 @@ const FlightDetailsCard = ({ flight }) => {
 
   return (
     <div className="h-auto w-full mb-4 p-4 bg-slate-100 relative rounded-lg ">
-      <h2 className="text-xs">{airline}</h2>
+      <h2>{airline}</h2>
       <div className="flex py-1">
         <div className="h-full flex-1 flex justify-between pr-2">
           <div className=" h-full flex flex-col justify-center">
@@ -56,7 +56,7 @@ const FlightDetailsCard = ({ flight }) => {
             <h5 className="text-gray-500">{arrivingTime}</h5>
           </div>
         </div>
-        <div className="h-full w-20 flex flex-col justify-evenly items-center border-l-2 p-2">
+        <div className="h-full w-10 m-auto sm:w-20 flex flex-col justify-evenly items-center sm:border-l-2 sm:p-2">
           <p className="text-green-500 font-bold">₹{price}</p>
           <p>/pax</p>
         </div>
