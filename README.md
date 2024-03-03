@@ -1,6 +1,6 @@
 # flightBooking
 
-Run the app
+Clone and Run the app by
 
 ```
 npm i
